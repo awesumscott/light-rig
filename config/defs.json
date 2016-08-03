@@ -1,0 +1,47 @@
+{	"fixDef": [
+		{	"id": 1,
+			"name": "Chauvet SlimPAR 64",
+			"channels": 3,
+			"light": [
+				{ "rgb": 0, "posx": 0, "posy": 0 }
+			]
+		},
+		{	"id": 2,
+			"name": "Cheapo Small PAR",
+			"channels": 4,
+			"light": [
+				{ "rgb": 1, "posx": 0, "posy": 0 }
+			]
+		},
+		{	"id": 3,
+			"name": "Chauvet COLORpalette",
+			"channels": 27,
+			"channelsSetTo255": [0],
+			"light": [
+				{ "rgb": 3,		"posx": -1.5,	"posy": 0.5 },
+				{ "rgb": 6,		"posx": -0.5,	"posy": 0.5 },
+				{ "rgb": 9,		"posx": 0.5,	"posy": 0.5 },
+				{ "rgb": 12,	"posx": 1.5,	"posy": 0.5 },
+				{ "rgb": 15,	"posx": 1.5,	"posy": -0.5 },
+				{ "rgb": 18,	"posx": 0.5,	"posy": -0.5 },
+				{ "rgb": 21,	"posx": -0.5,	"posy": -0.5 },
+				{ "rgb": 24,	"posx": -1.5,	"posy": -0.5 }
+			]
+		},
+		{	"id": 4,
+			"name": "Chauvet COLORrail",
+			"channels": 26,
+			"channelsSetTo255": [0],
+			"light": [
+				{ "rgb": 1,		"posx": -3.5,	"posy": 0 },
+				{ "rgb": 4,		"posx": -2.5,	"posy": 0 },
+				{ "rgb": 7,		"posx": -1.5,	"posy": 0 },
+				{ "rgb": 10,	"posx": -0.5,	"posy": 0 },
+				{ "rgb": 13,	"posx": 0.5,	"posy": 0 },
+				{ "rgb": 16,	"posx": 1.5,	"posy": 0 },
+				{ "rgb": 19,	"posx": 2.5,	"posy": 0 },
+				{ "rgb": 22,	"posx": 3.5,	"posy": 0 }
+			]
+		}
+	]
+}

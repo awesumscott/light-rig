@@ -1,0 +1,20 @@
+{	"fixture": [
+		{	"id": 1,
+			"type": 4,
+			"universe": 0,
+			"posx": 0,		"posy": 0
+		},
+		{	"id": 2,
+			"type": 1,
+			"universe": 0,
+			"posx": 0,		"posy": -2
+		}
+	],
+	"defaultgroup": 0,
+	"group": [
+		{	"id": 0,
+			"fixtures": [1, 2]
+		}
+	]
+}
+
