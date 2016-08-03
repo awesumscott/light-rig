@@ -33,7 +33,7 @@ class ModFader(object):
 		if numColors > 1:
 			time = self.timer.getDeltaNorm()
 			if time >= 1.:
-				self.timer.start += self.speed #add elapsed time to restart timer without losing any ms
+				self.timer.tare(self.speed) #add elapsed time to restart timer without losing any ms
 				self.colorIndex += 1
 				time %= 1. #reset elapsed now that colorIndex is incremented, without losing ms
 				if self.colorIndex >= numColors:

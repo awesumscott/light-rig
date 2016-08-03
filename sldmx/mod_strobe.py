@@ -14,10 +14,14 @@ class ModStrobe(object):
 	
 	def run(self):
 		time = self.timer.getDeltaNorm()
+		range = self.intensity_max - self.intensity_base
+		
 		if time <= .5:
 			self.intensity = self.intensity_base
 		else:
 			self.intensity = self.intensity_max
-		self.intensity %= 1.
+		
+		if time >= 1:
+			self.timer.tare(1./self.sps)
 		
 		return self.rig.group[self.group].setAll(None, self.intensity)

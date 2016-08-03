@@ -29,6 +29,8 @@ class Timer(object):
 		if d >= 1:
 			self.done = True
 		return d
+	def tare(self, seconds):
+		self.start += seconds
 
 def easeLinear(vFrom, vTo, val, vMax): #TODO: fucking fix this, this is still copied/pasted from easeInOut
 	#color from/to: rgb to interpolate between
