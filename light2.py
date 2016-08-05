@@ -1,8 +1,5 @@
 from sldmx import *
 
-#This is an example usage of the controller. I have some example menus and callbacks to test out some modules now,
-#and I'll keep updating this with better versions as the library is improved.
-
 #               red          orange        yellow          green       cyan           white            blue         purple         pink
 colorPresets = ((255, 0, 0), (255, 45, 0), (255, 127, 0), (0, 255, 0), (0, 255, 255), (255, 255, 255), (0, 0, 255), (255, 0, 255), (255, 0, 127))
 colorListPresets = [
@@ -47,22 +44,30 @@ def setCurGroup(data):
 
 def impulse(data):
 	global curGroup
-	rig.modules.add(ModImpulse(rig, curGroup))
+	#rig.modules.add(ModImpulse(rig, curGroup))
+	rig.modules.add(ModImpulse, curGroup)
 
 def addFader(data):
 	global fader
 	global fader2
-	fader = ModFader(rig, 0, 0)
-	rig.modules.add(fader)
+	#fader = ModFader(rig, 1, 0)
+	#rig.modules.add(fader)
+	#rig.colorList.append([])
+	#fader2 = ModFader(rig, 2, 1)
+	#rig.modules.add(fader2)
+	fader = rig.modules.add(ModFader, 0, 0)
 
 def startTransition(data):
 	global fader
 	newFader = ModFader(rig, 0, 1)
-	rig.modules.replace(fader, newFader)
+	fader.replaceWith(ModTransition(rig, fader, newFader, .5))
 	fader = newFader
 
 def startChase(data):
-	rig.modules.add(ModChase(rig, 0, [LightSource(1, (255,255,255), 1.5)], 1, .05))
+	rig.modules.add(ModChase, 0, [LightSource(1, (255,255,255), 1.5)], 1, .05)
+
+def strobeDelay(data):
+	rig.modules.add(ModDelay, ModSelfDestruct(rig, ModStrobe(rig, 0, 6), 5), 5)
 
 rig = Rig(1, True)
 colorMenu = rig.addMenu('2', "Color menu")
@@ -74,6 +79,7 @@ colorMenu.addAction('3', "Setting single color lists", setSingleColorLists)
 colorMenu.addAction('9', "Clearing color list", clearColors)
 rig.menu.addAction('4', "Starting transition module", startTransition)
 rig.menu.addAction('5', "Adding chase", startChase)
+rig.menu.addAction('6', "Starting delayed strobe", strobeDelay)
 rig.menu.addAction('9', "Setting current group", setCurGroup, 1)
 rig.menu.addAction('\n', "Impulse", impulse)
 

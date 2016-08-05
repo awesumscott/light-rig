@@ -23,14 +23,23 @@ class Timer(object):
 	def __init__(self, seconds):
 		self.seconds = seconds
 		self.start = time.clock()
-		self.done = False
-	def getDeltaNorm(self):
+		self._done = False
+	def _update(self):
 		d = (time.clock() - self.start) / self.seconds
 		if d >= 1:
-			self.done = True
+			self._done = True
 		return d
+	def done(self):
+		self._update()
+		return self._done
+	def getDeltaNorm(self):
+		return self._update()
 	def tare(self, seconds):
 		self.start += seconds
+		self._done = False
+	def restart(self):
+		self.start = time.clock()
+		self._done = False
 
 def easeLinear(vFrom, vTo, val, vMax): #TODO: fucking fix this, this is still copied/pasted from easeInOut
 	#color from/to: rgb to interpolate between

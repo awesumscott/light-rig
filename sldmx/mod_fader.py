@@ -6,10 +6,11 @@
 
 from rig_hardware import Light
 from rig_utils import Update, Timer, easeInOut
+from mod_base import Module
 
-class ModFader(object):
+class ModFader(Module):
 	def __init__(self, rig, group, colorListIndex, speed=2, style=0):
-		self.rig = rig
+		super(ModFader, self).__init__(rig)
 		self.group = group
 		self.destroy = False
 		self.speed = speed		#speed = stage units per second
@@ -17,7 +18,9 @@ class ModFader(object):
 		self.colorListIndex = colorListIndex
 		self.colorIndex = 0
 		self.timer = Timer(speed)
-		
+	def restart(self):
+		self.colorIndex = 0
+		self.timer.restart()
 	def run(self):
 		if len(self.rig.colorList) == 0: return []
 		if self.colorListIndex >= len(self.rig.colorList): self.colorListIndex = 0
@@ -32,7 +35,7 @@ class ModFader(object):
 		
 		if numColors > 1:
 			time = self.timer.getDeltaNorm()
-			if time >= 1.:
+			if self.timer.done():
 				self.timer.tare(self.speed) #add elapsed time to restart timer without losing any ms
 				self.colorIndex += 1
 				time %= 1. #reset elapsed now that colorIndex is incremented, without losing ms

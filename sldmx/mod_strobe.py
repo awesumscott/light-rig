@@ -1,17 +1,20 @@
 from rig_utils import Timer, Update
+from mod_base import Module
 
-class ModStrobe(object):
+class ModStrobe(Module):
 	def __init__(self, rig, group, sps=1.):
-		self.rig = rig
+		super(ModStrobe, self).__init__(rig)
 		self.group = group
 		self.destroy = False
-		self.sps = sps #strobes per second
-		self.timer = Timer(1./sps) #/2 because "one strobe" is half the time off then half the time on
+		self.sps = 1./sps #strobes per second
+		self.timer = Timer(self.sps) #/2 because "one strobe" is half the time off then half the time on
 		
-		self.intensity = 1. #maybe this should be a parameter
+		self.intensity = 0. #maybe this should be a parameter
 		self.intensity_base = 0.
 		self.intensity_max = 1.
-	
+	def restart(self):
+		self.timer.restart()
+		self.intensity = 1.
 	def run(self):
 		time = self.timer.getDeltaNorm()
 		range = self.intensity_max - self.intensity_base
@@ -21,7 +24,7 @@ class ModStrobe(object):
 		else:
 			self.intensity = self.intensity_max
 		
-		if time >= 1:
-			self.timer.tare(1./self.sps)
+		if self.timer.done():
+			self.timer.tare(self.sps)
 		
 		return self.rig.group[self.group].setAll(None, self.intensity)

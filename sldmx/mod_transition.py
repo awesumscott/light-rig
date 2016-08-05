@@ -1,14 +1,16 @@
 from rig_utils import Update, Timer, easeLinear, easeInOut
+from mod_base import Module
 
-class ModTransition(object):
+class ModTransition(Module):
 	def __init__(self, rig, oldModule, newModule, duration=.5):
-		self.rig = rig
+		super(ModTransition, self).__init__(rig)
 		self.oldModule = oldModule
 		self.newModule = newModule
 		self.destroy = False
 		self.duration = duration
 		self.timer = Timer(duration)
-	
+	def restart(self):
+		self.timer.restart()
 	def run(self):
 		updatesOld = self.oldModule.run()
 		updatesNew = self.newModule.run()
@@ -28,8 +30,8 @@ class ModTransition(object):
 			updates.append(Update(uO.fixId, uO.lightId, c, i))
 			index += 1
 		
-		if self.timer.done:
+		if self.timer.done():
 			print "transition done"
-			self.destroy = True
+			super(ModTransition, self).replaceWith(self.newModule)
 		
 		return updates

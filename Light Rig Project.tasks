@@ -1,0 +1,20 @@
+Animation:
+	Animation Module:
+		☐ Then method for starting a new animation after current one ends
+		☐ A Repeat parameter for looping the animation (maybe -1 for infinite, >0 for specified # of repeats)
+	Delay Module:
+		✔ Start running a module after a specified duration @done
+		☐ Pass off execution to the group after the duration has passed
+	Self-Destructing Module:
+		☐ Module for running a module and self-destructing after a specified time
+	A Delay and a Self-Destruct could be used together when initiating an animation to achieve timed effects without complicating the animation module.
+	rig.modules.add(Delay(SelfDestruct(Strobe(10), 5), 5))
+
+Group Module:
+	☐ Transition method for initiating a transition module to move to another animation? (should one module depend on another?)
+	☐ If a group becomes empty, the group should self-destruct (maybe this should require a param to behave this way--or more likely a method to initiate this behavior)
+	☐ Maybe instead of a self-destruct-on-empty, an onempty method that takes a callback, for implementing Then-like behavior for initiating new modules when known-self-destructing modules finish
+
+Module base class:
+	☐ ReplaceWith(mod) - replace itself with another module. This can be SwitchTo(Transition(self, Newmodule())) to keep ModTransition out of the base module.
+	☐ Restart() - get the module to initialize everything to get it back to the original state, useful for animation loops

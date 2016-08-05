@@ -17,7 +17,6 @@ class Rig(object):
 		self.fixture = {}
 		self.group = {}
 		self.modules = ModGroup(self)
-		#self.virtualFixtures = []
 		self.virtual = virtual
 		self.canvas = None
 		self.input = Input()
