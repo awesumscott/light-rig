@@ -1,5 +1,5 @@
-from rig_utils import Update, Timer, easeLinear, easeInOut
-from mod_base import Module
+from sldmx.rig_utils import Update, Timer, easeLinear, easeInOut
+from sldmx.mod_base import Module
 
 class ModTransition(Module):
 	def __init__(self, rig, oldModule, newModule, duration=.5):
@@ -31,7 +31,7 @@ class ModTransition(Module):
 			index += 1
 		
 		if self.timer.done():
-			print "transition done"
+			print("transition done")
 			super(ModTransition, self).replaceWith(self.newModule)
 		
 		return updates

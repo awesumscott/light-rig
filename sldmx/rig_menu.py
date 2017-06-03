@@ -12,7 +12,7 @@ class RigMenu(object):
 		self.children.append(a)
 		return a
 	def run(self):
-		print self.title
+		print(self.title)
 
 class RigMenuAction(object):
 	def __init__(self, key, title, func, numChars = 0):

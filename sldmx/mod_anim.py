@@ -1,21 +1,16 @@
 from rig_utils import Update, Timer, easeLinear, easeInOut
+from mod_base import Module
 
 class ModAnim(Module):
-	def __init__(self, rig, oldModule, newModule, duration=.5):
+	def __init__(self, rig, func, duration=1.):
 		super(ModAnim, self).__init__(rig)
-		self.oldModule = oldModule
-		self.newModule = newModule
+		self.func = func
 		self.destroy = False
 		self.duration = duration
 		self.timer = Timer(duration)
-		self.restart()
+		#self.restart()
 	def restart(self):
-		self.oldModule = oldModule
-		self.newModule = newModule
-		self.destroy = False
-		self.duration = duration
-		self.timer = Timer(duration)
-	
+		self.timer.restart()
 	def run(self):
 		updatesOld = self.oldModule.run()
 		updatesNew = self.newModule.run()
@@ -37,6 +32,6 @@ class ModAnim(Module):
 		
 		if self.timer.done():
 			print "transition done"
-			self.destroy = True
+			super(ModAnim, self).replaceWith(self.newModule)
 		
 		return updates

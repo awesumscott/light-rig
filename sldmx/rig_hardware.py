@@ -1,4 +1,4 @@
-from rig_utils import Update, easeCircle
+from sldmx.rig_utils import Update, easeCircle
 
 #Fixtures represent the actual hardware units with one or multiple light sections
 class Fixture(object):
@@ -22,7 +22,7 @@ class Fixture(object):
 	def setAll(self, color=None, intensity=None):
 		updates = []
 		i = 0
-		for light in self.light:
+		for i in range(len(self.light)):
 			updates.append(Update(self.id, i, color, intensity))
 			i += 1
 		return updates

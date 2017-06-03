@@ -1,10 +1,12 @@
 import math
-from rig_hardware import Fixture
-from rig_utils import Update, Timer, easeInOut
+from sldmx.rig_hardware import Fixture
+from sldmx.rig_utils import Update, Timer, easeInOut
+from sldmx.mod_base import Module
 
-class ModChase(object):
+#passes a sphere of color across the fixtures as they continue their running modules
+class ModChase(Module):
 	def __init__(self, rig, group, lightSources, type, speed=1., slope=1.):
-		self.rig = rig
+		super(ModChase, self).__init__(rig)
 		self.group = group
 		self.lightSource = lightSources
 		self.type = type
@@ -25,7 +27,8 @@ class ModChase(object):
 			for ls in self.lightSource:
 				ls.origin = rect[2] + ls.pos + ls.weight
 				self.endpoint = rect[0]
-		
+	def restart(self):
+		self.timer.restart()
 	def run(self):
 		time = self.timer.getDeltaNorm()
 		

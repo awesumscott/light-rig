@@ -1,9 +1,9 @@
-from Tkinter import *
+from tkinter import *
 
 class VirtualRig(object):
 	def __init__(self):
 		self.gui = Tk()
-		self.canvas = Canvas(self.gui, width=500, height=200)
+		self.canvas = Canvas(self.gui, width=500, height=500)
 		self.canvas.pack(fill=BOTH, expand=1)
 		self.centerX = int(self.canvas["width"])/2
 		self.centerY = int(self.canvas["height"])/2		

@@ -19,12 +19,17 @@ class Input(object):
 	def getKey(self):
 		if self._windows:
 			if self.msvcrt.kbhit():
-				return self.msvcrt.getch()
+				return Input._standardize(self.msvcrt.getch().decode("utf-8"))
 		else:
 			if self.cs != None:
 				d = self.cs.get_data()
 				if d != '\x1b' and d != False:
-					return d
+					return Input._standardize(d)
+	
+	def _standardize(s):
+		s = s.lower()
+		s = "\n" if s == "\r" else s
+		return s
 
 class ConsoleStream(object):
 	def __enter__(self, input):

@@ -1,5 +1,5 @@
-from rig_utils import Timer, Update
-from mod_base import Module
+from sldmx.rig_utils import Timer, Update
+from sldmx.mod_base import Module
 
 class ModStrobe(Module):
 	def __init__(self, rig, group, sps=1.):

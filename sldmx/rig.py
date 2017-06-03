@@ -1,13 +1,14 @@
 import json, array
-from rig_menu import *
-from rig_utils import Timer, easeCircle
-from rig_input import Input
-from rig_virtual import VirtualRig
-from rig_hardware import FixtureGroup, Fixture, Light
+from sldmx.rig_menu import *
+from sldmx.rig_utils import Timer, easeCircle
+from sldmx.rig_input import Input
+from sldmx.rig_virtual import VirtualRig
+from sldmx.rig_hardware import FixtureGroup, Fixture, Light
 
 TICK_INTERVAL = 20
 
-from mod_group import ModGroup
+from sldmx.mod_group import ModGroup
+from sldmx.mod_fill import ModFill
 
 class Rig(object):
 	def __init__(self, config, virtual=False):
@@ -20,6 +21,8 @@ class Rig(object):
 		self.virtual = virtual
 		self.canvas = None
 		self.input = Input()
+
+		self.modules.add(ModFill(self, 0, None, Light.IntensityBase))
 		
 		if self.virtual:
 			self.virtual = VirtualRig()
@@ -37,7 +40,7 @@ class Rig(object):
 		fixtureDefs = {}
 		for fixDef in fixDefData["fixDef"]:
 			fixtureDefs[fixDef["id"]] = fixDef
-		print fixtureDefs
+		print(fixtureDefs)
 		
 		for fixture in data["fixture"]:
 			type = int(fixture["type"])
@@ -59,7 +62,7 @@ class Rig(object):
 					self.virtual.addLight(newLight, lightX, lightY, numLights)
 					
 				newFixture.addLight(newLight)
-		print self.fixture
+		print(self.fixture)
 		if "group" in data:
 			for group in data["group"]:
 				groupId = group["id"]
@@ -93,7 +96,7 @@ class Rig(object):
 		
 	def DmxSent(self, state):
 		if not state.Succeeded():
-			print state.message
+			print(state.message)
 			self.wrapper.Stop()
 		
 	def start(self):
@@ -111,10 +114,6 @@ class Rig(object):
 	def step(self):
 		key = self.input.getKey()
 		if key != None:
-			if key == "\r":
-				key = "\n"
-			key = key.lower()
-			
 			if type(self.activeMenu) is RigMenuAction:
 				m = self.activeMenu
 				if m.collectChars > 0 and len(m.data) < m.collectChars:
@@ -131,17 +130,19 @@ class Rig(object):
 							m.run()
 						elif type(m) is RigMenuAction:
 							if m.collectChars == 0:
-								print m.title
+								print(m.title)
 								m.callback(m.data)
 								m.data = ""
 								self.activeMenu = self.menu
 							else:
-								print "Enter " + str(m.collectChars) + " characters"
+								print("Enter " + str(m.collectChars) + " characters")
 								self.activeMenu = m
-							
 						break
 		
-		updates = self.modules.run()
+		if len(self.modules):
+			updates = self.modules.run()
+		else:
+			updates = self.group[0].setAll((0,0,0), 0.)
 		
 		for u in updates:
 			light = self.fixture[u.fixId].light[u.lightId]

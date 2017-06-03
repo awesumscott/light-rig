@@ -1,10 +1,12 @@
-from rig import Rig
-from rig_utils import Update, LightSource, Timer, easeLinear, easeInOut, easeCircle
-from mod_chase import ModChase
-from mod_delay import ModDelay
-from mod_fader import ModFader
-from mod_group import ModGroup
-from mod_impulse import ModImpulse
-from mod_selfdestruct import ModSelfDestruct
-from mod_strobe import ModStrobe
-from mod_transition import ModTransition
+from sldmx.rig import Rig
+from sldmx.rig_hardware import *
+from sldmx.rig_utils import Update, LightSource, Timer, easeLinear, easeInOut, easeCircle
+from sldmx.mod_chase import ModChase
+from sldmx.mod_delay import ModDelay
+from sldmx.mod_fader import ModFader
+from sldmx.mod_fill import ModFill
+from sldmx.mod_group import ModGroup
+from sldmx.mod_impulse import ModImpulse
+from sldmx.mod_selfdestruct import ModSelfDestruct
+from sldmx.mod_strobe import ModStrobe
+from sldmx.mod_transition import ModTransition

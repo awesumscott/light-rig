@@ -1,4 +1,4 @@
-from rig_utils import Update
+from sldmx.rig_utils import Update
 
 #module groups allow for nesting and replacing
 class Module(object):

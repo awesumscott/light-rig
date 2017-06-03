@@ -1,5 +1,5 @@
-from rig_utils import Update
-from mod_base import Module
+from sldmx.rig_utils import Update
+from sldmx.mod_base import Module
 
 #TODO: make this use a duration and an easing equation
 #y=cos(.5pi*x+.5pi)+1

@@ -1,12 +1,12 @@
-from rig_utils import Timer, Update
-from mod_base import Module
+from sldmx.rig_utils import Timer, Update
+from sldmx.mod_base import Module
 
+#run specified modules, but stop and remove self after specified time
 class ModSelfDestruct(Module):
 	def __init__(self, rig, module, duration):
 		super(ModSelfDestruct, self).__init__(rig)
 		self.module = module
 		self.timer = Timer(duration)
-		self.destroy = False
 	def restart(self):
 		self.timer.restart()
 		self.module.restart()

@@ -4,9 +4,9 @@
 #"Unit" is a vague distance approximately 15cm
 #"Speed" is specified as a constructor argument
 
-from rig_hardware import Light
-from rig_utils import Update, Timer, easeInOut
-from mod_base import Module
+from sldmx.rig_hardware import Light
+from sldmx.rig_utils import Update, Timer, easeInOut
+from sldmx.mod_base import Module
 
 class ModFader(Module):
 	def __init__(self, rig, group, colorListIndex, speed=2, style=0):
@@ -44,9 +44,9 @@ class ModFader(Module):
 			
 			fromC = cl[self.colorIndex]
 			toC = cl[self.colorIndex+1] if self.colorIndex+1 < numColors else cl[0]
-			return self.rig.group[self.group].setAll(easeInOut(fromC, toC, time, 1.), Light.IntensityBase) #using Light.IntensityBase here and below probably isn't ideal
+			return self.rig.group[self.group].setAll(easeInOut(fromC, toC, time, 1.))#, Light.IntensityBase) #using Light.IntensityBase here and below probably isn't ideal
 			
 		elif numColors > 0:
-			return self.rig.group[self.group].setAll(cl[0], Light.IntensityBase)
+			return self.rig.group[self.group].setAll(cl[0])#, Light.IntensityBase)
 		
 		return []
