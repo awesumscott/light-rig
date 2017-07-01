@@ -22,10 +22,10 @@ class LightSource(object):
 class Timer(object):
 	def __init__(self, seconds):
 		self.seconds = seconds
-		self.start = time.clock()
+		self.start = time.time()
 		self._done = False
 	def _update(self):
-		d = (time.clock() - self.start) / self.seconds
+		d = (time.time() - self.start) / self.seconds
 		if d >= 1:
 			self._done = True
 		return d
@@ -44,6 +44,10 @@ class Timer(object):
 def easeLinear(vFrom, vTo, val, vMax): #TODO: fucking fix this, this is still copied/pasted from easeInOut
 	#color from/to: rgb to interpolate between
 	#val/max: ratio of interpolation
+	
+	if vFrom == None:	vFrom = 0
+	if vTo == None:		vTo = 0
+	
 	ratio = float(val) / float(vMax)
 	ang = math.cos(ratio*math.pi + math.pi)/2+.5
 	
@@ -58,6 +62,10 @@ def easeLinear(vFrom, vTo, val, vMax): #TODO: fucking fix this, this is still co
 def easeInOut(vFrom, vTo, val, vMax):
 	#color from/to: rgb to interpolate between
 	#val/max: ratio of interpolation
+	
+	if vFrom == None:	vFrom = (0, 0, 0)
+	if vTo == None:		vTo = (0, 0, 0)
+	
 	ratio = float(val) / float(vMax)
 	ang = math.cos(ratio*math.pi + math.pi)/2+.5
 	
@@ -68,6 +76,36 @@ def easeInOut(vFrom, vTo, val, vMax):
 				ease(ang, vFrom[1], vTo[1]),
 				ease(ang, vFrom[2], vTo[2]))
 	return ease(ang, vFrom, vTo)
+
+def easeIn(xFrom, xTo, val):
+	#y=x^2
+	ratio = float(val) / float(1)
+	delta = ratio*ratio
+	return delta * float(xTo - xFrom) + xFrom
+def easeOut(xFrom, xTo, val):
+	#y=x^2
+	#alternative: y=cos(.5pi*x-.5pi)
+	ratio = float(val) / float(1)
+	v = (ratio-1)
+	delta = -(v*v) + 1
+	return delta * float(xTo - xFrom) + xFrom
+#def easeOutColor(vFrom, vTo, val, vMax):
+#	#color from/to: rgb to interpolate between
+#	#val/max: ratio of interpolation
+#	
+#	if vFrom == None:	vFrom = (0, 0, 0)
+#	if vTo == None:		vTo = (0, 0, 0)
+#	
+#	ratio = float(val) / float(vMax)
+#	ang = math.cos(ratio*math.pi + math.pi)/2+.5
+#	
+#	ease = lambda ang, xFrom, xTo: int(ang * float(xTo - xFrom) + xFrom)
+#	
+#	if isinstance(vFrom, tuple):
+#		return (ease(ang, vFrom[0], vTo[0]),
+#				ease(ang, vFrom[1], vTo[1]),
+#				ease(ang, vFrom[2], vTo[2]))
+#	return ease(ang, vFrom, vTo)
 
 #easeCircle should be used from -1 to 1
 def easeCircle(vFrom, vTo, val, vMax, strength=1.):

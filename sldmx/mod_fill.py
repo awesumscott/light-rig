@@ -8,5 +8,8 @@ class ModFill(Module):
 		self.group = group
 		self.color = color
 		self.intensity = intensity
+	def __str__(self):
+		return 'Fill-' + ('blank' if self.color == None else '#%02x%02x%02x'%self.color);
 	def run(self):
 		return self.rig.group[self.group].setAll(self.color, self.intensity)
+

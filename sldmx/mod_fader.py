@@ -34,19 +34,17 @@ class ModFader(Module):
 			self.colorIndex = 0
 		
 		if numColors > 1:
-			time = self.timer.getDeltaNorm()
-			if self.timer.done():
-				self.timer.tare(self.speed) #add elapsed time to restart timer without losing any ms
+			if self.rig.tempo.tickedThisStep:
 				self.colorIndex += 1
-				time %= 1. #reset elapsed now that colorIndex is incremented, without losing ms
 				if self.colorIndex >= numColors:
 					self.colorIndex = 0
 			
 			fromC = cl[self.colorIndex]
 			toC = cl[self.colorIndex+1] if self.colorIndex+1 < numColors else cl[0]
-			return self.rig.group[self.group].setAll(easeInOut(fromC, toC, time, 1.))#, Light.IntensityBase) #using Light.IntensityBase here and below probably isn't ideal
+			return self.rig.group[self.group].setAll(easeInOut(fromC, toC, self.rig.tempo.getDelta(), 1.))
 			
 		elif numColors > 0:
-			return self.rig.group[self.group].setAll(cl[0])#, Light.IntensityBase)
+			return self.rig.group[self.group].setAll(cl[0])
 		
 		return []
+

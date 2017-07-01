@@ -1,0 +1,29 @@
+{
+	"name": "Red House",
+	"artist": "Jimi Hendrix",
+	
+	"colorLists": [
+		[[255, 0, 0], [255, 45, 0]],
+		[[0, 255, 0], [0, 0, 255]]
+	],
+	"ui": [
+		{
+			"type": "gradient",
+			"colors": [[0, 0, 255], [0, 255, 255], [0, 0, 0]]
+		}	
+	],
+	
+	"modules": [
+		{	"id": 1,
+			"type": 1,
+			"params": [
+				
+			]
+		},
+		{	"id": 2,
+			"type": 1,
+			"universe": 1,
+			"posx": 0,		"posy": 8
+		}
+	]
+}

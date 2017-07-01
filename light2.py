@@ -1,15 +1,6 @@
 from sldmx import *
+import json
 
-red = (255, 0, 0)
-orange = (255, 45, 0)
-yellow = (255, 127, 0)
-green = (0, 255, 0)
-cyan = (0, 255, 255)
-white = (255, 255, 255)
-blue = (0, 0, 255)
-purple = (255, 0, 255)
-pink = (255, 0, 127)
-halfWhite = (127, 127, 127)
 colorPresets = (red, orange, yellow, green, cyan, white, blue, purple, pink)
 colorListPresets = [
 	[red, purple, blue, purple], #"3D" or "Po-lice"
@@ -23,7 +14,12 @@ colorListPresets = [
 fader = 0
 fader2 = 0
 curGroup = 0
-blank = False
+blank = None
+strobeModule = None
+chaseColor = white
+
+presets = [] #list of module presets loaded for songs
+presetIndex = 0
 
 def addColor(data):
 	c = colorPresets[int(data)-1]
@@ -38,15 +34,17 @@ def setColorList(data):
 		print("New color list set!")
 	rig.colorList = []
 	rig.colorList.append(colorListPresets[i])
+	#rig.modules.clear()
+	
 	#rig.colorList.append(colorListPresets[i+1])
-def setSingleColorLists(data):
+def setSingleColorLists():
 	global fader
 	rig.colorList = []
-	rig.colorList.append([(255, 0, 0)])
-	rig.colorList.append([(0, 0, 255)])
+	rig.colorList.append([red])
+	rig.colorList.append([blue])
 	fader = ModFader(rig, 0, 0)
 	rig.modules.add(fader)
-def clearColors(data):
+def clearColors():
 	rig.colorList = []
 def setCurGroup(data):
 	global curGroup
@@ -54,25 +52,31 @@ def setCurGroup(data):
 	global fader
 	fader.group = curGroup
 
-def impulse(data):
+def impulse():
 	global curGroup
-	rig.modules.add(ModImpulse(rig, curGroup))
+	rig.modules.add(ModImpulse(rig, curGroup, 2))
 
-def addFader(data):
+def addFader():
 	global fader
+	rig.modules.clear()
+	rig.modules.add(ModFill(rig, 0, None, Light.IntensityBase))
 	fader = rig.modules.add(ModFader(rig, 0, 0))
 
-def startTransition(data):
+def startTransition():
 	global fader
 	if len(rig.modules) < 1: return
 	newFader = ModFader(rig, 0, 1)
 	rig.modules[0].replaceWith(ModTransition(rig, fader, newFader, .5))
 	fader = newFader
 
-def startChase(data):
-	rig.modules.add(ModChase(rig, 0, [LightSource(1, (255,255,255), 1.2)], 1, .05))
+def startChase():
+	rig.modules.add(ModChase(rig, 0, [LightSource(1, chaseColor, 1.2)], 1, .05))
+def setChaseColor(data):
+	global chaseColor
+	index = int(data) - 1
+	chaseColor = colorPresets[max(min(index, len(colorPresets) - 1), 0)]
 
-def strobeDelay(data):
+def strobeDelay():
 	rig.modules.add(
 		ModDelay(rig, 
 			ModSelfDestruct(rig, 
@@ -83,17 +87,94 @@ def strobeDelay(data):
 		)
 	)
 
-def pop(data):
-	rig.modules.pop()
-def toggleBlank(data):
+def toggleBlank():
 	global blank
 	if blank:
-		rig.modules.pop()
+		rig.modules.remove(blank)
+		blank = None
 	else:
-		rig.modules.add(ModFill(rig, curGroup, None, 0.))
-	blank = not blank
+		blank = ModFill(rig, curGroup, None, 0.)
+		rig.modules.add(blank)
+def toggleStrobe():
+	global strobeModule
+	if strobeModule:
+		rig.modules.remove(strobeModule)
+		strobeModule = None
+	else:
+		strobeModule = ModStrobe(rig, curGroup, 5)
+		rig.modules.add(strobeModule)
 
-rig = Rig(2, True)
+def setSongPresets(data):
+	global presetst
+	global presetIndex
+	try:
+		jsonData = open('./songs/' + str(data) + '.json', 'r')
+		data = json.load(jsonData)
+		jsonData.close()	
+	except FileNotFoundError:
+		print("No song config with ID " + str(data))
+		return
+	
+	#rig.colorList = []
+	#for colorList in data["colorLists"]
+	#	rig.colorList.append(colorList)
+	rig.colorList = data["colorLists"]
+	
+	p1 = ModGroup(rig)
+	#p1.add(ModFill(rig, curGroup, red, .5))
+	p1.add(ModFill(rig, curGroup, None, .5))
+	presets.append(p1)
+	
+	p2 = ModGroup(rig)
+	p2.add(ModFill(rig, curGroup, green, .5))
+	presets.append(p2)
+	
+	p3 = ModGroup(rig)
+	p3.add(ModFill(rig, curGroup, blue, .5))
+	presets.append(p3)
+	presetIndex = 0
+	rig.modules.add(presets[presetIndex])
+	
+	print('Song loaded: "' + data['name'] + '" by ' + data['artist'])
+	
+def preset1():
+	global presetIndex
+	if len(presets) < 1: return
+	if presets[presetIndex] == presets[0]: return
+	presetIndex = 0
+	rig.modules[0].replaceWith(ModTransition(rig, rig.modules[0], presets[presetIndex], 1.))
+	
+def preset2():
+	global presetIndex
+	if len(presets) < 2: return
+	if presets[presetIndex] == presets[1]: return
+	presetIndex = 1
+	rig.modules[0].replaceWith(ModTransition(rig, rig.modules[0], presets[presetIndex], 1.))
+	
+def preset3():
+	global presetIndex
+	if len(presets) < 3: return
+	if presets[presetIndex] == presets[2]: return
+	presetIndex = 2
+	rig.modules[0].replaceWith(ModTransition(rig, rig.modules[0], presets[presetIndex], 1.))
+
+def gradientTester():
+	#create a gradient popup to operate on a
+	#fill module for a group containing all the lights
+	rig.initGui()
+	fill = ModFill(rig, 0, black, 1.)
+	rig.modules.add(fill)
+	rig.gui.showGradientDialog(fill)
+
+def printStatus():
+	print(rig.modules)
+
+def cls():
+	print("\033c")
+
+cls()
+rig = Rig(1, True)
+
 rig.menu.addAction('1', "Adding fader", addFader)
 
 #acm = colorMenu.addMenu('1', "Add color!")
@@ -101,15 +182,25 @@ colorMenu = rig.addMenu('2', "Color menu")
 colorMenu.addAction('1', "Adding preset color", addColor, 1)
 colorMenu.addAction('2', "Adding preset color list", setColorList, 1)
 colorMenu.addAction('3', "Setting single color lists", setSingleColorLists)
+colorMenu.addAction('4', "Setting chase color", setChaseColor, 1)
 colorMenu.addAction('9', "Clearing color list", clearColors)
 
 rig.menu.addAction('4', "Starting transition module", startTransition)
-rig.menu.addAction('5', "Adding chase", startChase)
+rig.menu.addAction('z', "Adding chase", startChase)
 rig.menu.addAction('6', "Starting delayed strobe", strobeDelay)
-rig.menu.addAction('p', "Popping last module added", pop)
+rig.menu.addAction('p', "Popping last module added", rig.modules.pop)
 rig.menu.addAction('9', "Setting current group", setCurGroup, 1)
 rig.menu.addAction(' ', "Toggle Blankness", toggleBlank)
 rig.menu.addAction('\n', "Impulse", impulse)
+rig.menu.addAction('/', "Enter 3-digit song ID", setSongPresets, 3)
+rig.menu.addAction('.', "Tap", rig.tempo.tap)
+rig.menu.addAction('s', "Status", printStatus)
+#rig.menu.addAction('a', "Impulse", impulse)
+rig.menu.addAction('x', "Toggle strobe", toggleStrobe)
+rig.menu.addAction('a', "Switching to Preset 1", preset1)
+rig.menu.addAction('b', "Switching to Preset 2", preset2)
+rig.menu.addAction('c', "Switching to Preset 3", preset3)
+rig.menu.addAction('g', "Gradient color picker dialog", gradientTester)
 
 #TODO: implement this syntax for anims:
 #v = lambda: ModFader(rig, 0, 1)

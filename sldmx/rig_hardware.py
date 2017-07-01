@@ -4,15 +4,18 @@ from sldmx.rig_utils import Update, easeCircle
 class Fixture(object):
 	InterpLinear = 1 #TODO: maybe these should go in an interp helper class?
 	InterpRadial = 2
-	def __init__(self, id, channels, universe, posX, posY, channelsSetTo255):
+	def __init__(self, id, channels, universe, posX, posY, fixedchannels):
 		self.universe = universe #TODO: add this stuff in later, assemble em all via universe and send
 		self.id = id
 		self.light = []
 		self.channels = channels
+		self.channelOffset = 0
 		self.posX = posX
 		self.posY = posY
-		self.channelsSetTo255 = channelsSetTo255
+		self.fixedchannels = fixedchannels
 		self.rect = None #(xMin, yMin, xMax, yMax)
+	def __repr__(self):
+		return "Fixture ID " + str(self.id) + " on DMX channel " + str(self.channelOffset + 1) + "\n"
 	def addLight(self, light):
 		self.light.append(light)
 		if self.rect == None:
@@ -53,8 +56,8 @@ class Fixture(object):
 		for light in self.light:
 			start = light.rgbOffset
 			channels[start:start + 3] = light.output()
-		for ch in self.channelsSetTo255:
-			channels[ch] = 255
+		for fc in self.fixedchannels:
+			channels[int(fc)] = self.fixedchannels[fc]
 		return channels
 
 #Lights are the individually controllable sections within a fixture
@@ -67,7 +70,10 @@ class Light(object):
 		self.color = (0, 0, 0)
 		self.intensity = .5
 	def output(self):
-		intensity = self.intensity if self.intensity != None else Light.intensity_base
+		#intensity = self.intensity if self.intensity != None else Light.IntensityBase
+		intensity = self.intensity
+		
+		#print(str(intensity))
 		return tuple(int(intensity * c) for c in self.color)
 
 #Groups of fixtures can be used to apply modules to a subset of the entire rig

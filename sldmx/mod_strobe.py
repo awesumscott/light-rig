@@ -12,12 +12,14 @@ class ModStrobe(Module):
 		self.intensity = 0. #maybe this should be a parameter
 		self.intensity_base = 0.
 		self.intensity_max = 1.
+	def __str__(self):
+		return "Strobe(" + str(self.sps) + ")"
 	def restart(self):
 		self.timer.restart()
 		self.intensity = 1.
 	def run(self):
 		time = self.timer.getDeltaNorm()
-		range = self.intensity_max - self.intensity_base
+		#range = self.intensity_max - self.intensity_base
 		
 		if time <= .5:
 			self.intensity = self.intensity_base

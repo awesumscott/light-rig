@@ -1,40 +1,51 @@
 {	"fixture": [
 		{	"id": 1,
 			"type": 1,
-			"universe": 0,
-			"posx": -6,		"posy": 0
+			"universe": 1,
+			"posx": -4,		"posy": 8
 		},
 		{	"id": 2,
 			"type": 1,
-			"universe": 0,
-			"posx": -4,		"posy": 0
+			"universe": 1,
+			"posx": 0,		"posy": 8
 		},
 		{	"id": 3,
-			"type": 2,
-			"universe": 0,
-			"posx": 4,		"posy": 0
+			"type": 1,
+			"universe": 1,
+			"posx": 4,		"posy": 8
 		},
 		{	"id": 4,
-			"type": 2,
-			"universe": 0,
-			"posx": 6,		"posy": 0
+			"type": 3,
+			"universe": 1,
+			"posx": -7,		"posy": -1
 		},
 		{	"id": 5,
 			"type": 3,
-			"universe": 0,
-			"posx": 0,		"posy": 0
+			"universe": 1,
+			"posx": 7,		"posy": -1
+		},
+		{	"id": 6,
+			"type": 4,
+			"universe": 1,
+			"posx": 0,		"posy": -1
 		}
 	],
 	"defaultgroup": 0,
 	"group": [
 		{	"id": 0,
-			"fixtures": [1, 2, 3, 4, 5]
+			"fixtures": [1, 2, 3, 4, 5, 6]
 		},
 		{	"id": 1,
-			"fixtures": [1, 4]
+			"fixtures": [1, 2, 3]
 		},
 		{	"id": 2,
-			"fixtures": [2, 3]
+			"fixtures": [4, 5, 6]
+		},
+		{	"id": 3,
+			"fixtures": [4, 5]
+		},
+		{	"id": 4,
+			"fixtures": [6]
 		}
 	]
 }

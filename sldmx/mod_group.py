@@ -7,12 +7,24 @@ class ModGroup(Module):
 	def __init__(self, rig):
 		super(ModGroup, self).__init__(rig)
 		self._modules = []
+	def __str__(self):
+		#tostr = lambda x: str(x)
+		
+		#modStrs = ''
+		#for mod in self._modules:
+		#	modStrs += str(mod) + ', '
+		return 'Group(' + ', '.join(map(lambda x: str(x), self._modules)) + ')'
 	def __len__(self):
 		return len(self._modules)
 	def __getitem__(self,index):
 		return self._modules[index]
 	def add(self, mod):
 		self._modules.append(mod)
+	def remove(self, mod):
+		if mod in self._modules:
+			self._modules.remove(mod)
+	def clear(self):
+		self._modules = []
 	def pop(self):
 		if len(self):
 			self._modules.pop()
@@ -37,5 +49,8 @@ class ModGroup(Module):
 					self._modules.remove(mod)
 				else:
 					self._modules[self._modules.index(mod)] = mod.replacement
+			mod.destroy = False #reset this here in case it ever gets used again
+		#if self.destroy:
+		#	self.rig.modules = self.replacement
 		return newUpdates
-		
+

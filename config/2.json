@@ -1,37 +1,37 @@
 {	"fixture": [
 		{	"id": 1,
 			"type": 1,
-			"universe": 0,
+			"universe": 1,
 			"posx": -6,		"posy": 0
 		},
 		{	"id": 2,
 			"type": 1,
-			"universe": 0,
+			"universe": 1,
 			"posx": -4,		"posy": 0
 		},
 		{	"id": 3,
 			"type": 2,
-			"universe": 0,
+			"universe": 1,
 			"posx": 4,		"posy": 0
 		},
 		{	"id": 4,
 			"type": 2,
-			"universe": 0,
+			"universe": 1,
 			"posx": 6,		"posy": 0
 		},
 		{	"id": 5,
 			"type": 3,
-			"universe": 0,
+			"universe": 1,
 			"posx": 0,		"posy": -1
 		},
 		{	"id": 6,
 			"type": 4,
-			"universe": 0,
+			"universe": 1,
 			"posx": 0,		"posy": 1.5
 		},
 		{	"id": 7,
 			"type": 3,
-			"universe": 0,
+			"universe": 1,
 			"posx": 0,		"posy": -3.5
 		}
 	],

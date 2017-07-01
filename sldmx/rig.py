@@ -4,16 +4,18 @@ from sldmx.rig_utils import Timer, easeCircle
 from sldmx.rig_input import Input
 from sldmx.rig_virtual import VirtualRig
 from sldmx.rig_hardware import FixtureGroup, Fixture, Light
-
-TICK_INTERVAL = 20
+from ola.ClientWrapper import ClientWrapper
+from sldmx.rig_tempo import TapTempo
 
 from sldmx.mod_group import ModGroup
 from sldmx.mod_fill import ModFill
 
 class Rig(object):
+	TICK_INTERVAL = 20
 	def __init__(self, config, virtual=False):
 		self.menu = RigMenu('.', "Main menu")
 		self.activeMenu = self.menu
+		self.exiting = False
 		self.colorList = [[]]
 		self.fixture = {}
 		self.group = {}
@@ -21,11 +23,15 @@ class Rig(object):
 		self.virtual = virtual
 		self.canvas = None
 		self.input = Input()
+		self.universes = []
+		self.dmxData = {}
+		self.tempo = TapTempo()
+		self.gui = None
 
-		self.modules.add(ModFill(self, 0, None, Light.IntensityBase))
+		#self.modules.add(ModFill(self, 0, None, Light.IntensityBase))
 		
 		if self.virtual:
-			self.virtual = VirtualRig()
+			self.virtual = VirtualRig(self)
 		else:
 			from ola.ClientWrapper import ClientWrapper
 		
@@ -40,19 +46,31 @@ class Rig(object):
 		fixtureDefs = {}
 		for fixDef in fixDefData["fixDef"]:
 			fixtureDefs[fixDef["id"]] = fixDef
-		print(fixtureDefs)
+		###print(fixtureDefs)
 		
+		currentChannelOffsets = {}
 		for fixture in data["fixture"]:
 			type = int(fixture["type"])
 			fixtureDef = fixtureDefs[type]
 			lightData = fixtureDef["light"]
+			
+			universe = int(fixture["universe"])
+			if (not universe in self.universes):
+				self.universes.append(universe)
+				self.dmxData[universe] = bytearray([0]*512)
+				currentChannelOffsets[universe] = 0
+			
 			fixX = fixture["posx"]
 			fixY = fixture["posy"]
 			numLights = len(lightData)
-			channelsSetTo255 = []
-			if "channelsSetTo255" in fixtureDef:
-				channelsSetTo255 = fixtureDef["channelsSetTo255"]
-			newFixture = Fixture(fixture["id"], fixtureDef["channels"], fixture["universe"], fixX, fixY, channelsSetTo255)
+			fixedchannels = []
+			if "fixedchannels" in fixtureDef:
+				fixedchannels = fixtureDef["fixedchannels"]
+			channels = fixtureDef["channels"]
+			newFixture = Fixture(fixture["id"], channels, universe, fixX, fixY, fixedchannels)
+			newFixture.channelOffset = currentChannelOffsets[universe]
+			currentChannelOffsets[universe] += channels
+			
 			self.fixture[fixture["id"]] = newFixture
 			for light in lightData:
 				lightX = light["posx"] + fixX
@@ -62,7 +80,7 @@ class Rig(object):
 					self.virtual.addLight(newLight, lightX, lightY, numLights)
 					
 				newFixture.addLight(newLight)
-		print(self.fixture)
+		#print(self.fixture)
 		if "group" in data:
 			for group in data["group"]:
 				groupId = group["id"]
@@ -70,29 +88,23 @@ class Rig(object):
 					
 		#	if "defaultgroup" in data:
 		#		self.group_index = data["defaultgroup"]
-			
-	def virtualGuiUpdate(self):
-		self.step()
-		
-		for fixture in self.fixture:
-			f = self.fixture[fixture]
-			for light in f.light:
-				self.virtual.setLight(light.virtualLight, '#%02x%02x%02x'%light.output())
-		
-		self.virtual.update()
+	
 	def lightUpdate(self):
-		#TODO: make a universes dict, if fix univ isn't in dict, make new 512 array, add output to dict byte arrays, SendDmx each univ array
-		global TICK_INTERVAL
-		self.wrapper.AddEvent(TICK_INTERVAL, self.lightUpdate)
+		self.wrapper.AddEvent(Rig.TICK_INTERVAL, self.lightUpdate)
 		self.step()
-		data = array.array('B')
+		
 		for fixture in self.fixture:
 			f = self.fixture[fixture]
 			bytes = f.output()
-			for b in bytes:
-				data.append(b)
+			self.dmxData[f.universe][f.channelOffset:f.channelOffset+f.channels] = bytes
 		
-		self.wrapper.Client().SendDmx(0, data, self.DmxSent)
+		for u in self.universes:
+			#print("universe " + str(u) + " length = " + str(len(self.dmxData[u])))
+			self.wrapper.Client().SendDmx(u, array.array('B', self.dmxData[u]), self.DmxSent)
+	def clearLights(self):
+		clearData = array.array('B', [0]*512)
+		for u in self.universes:
+			self.wrapper.Client().SendDmx(u, clearData, self.DmxSent)
 		
 	def DmxSent(self, state):
 		if not state.Succeeded():
@@ -100,20 +112,36 @@ class Rig(object):
 			self.wrapper.Stop()
 		
 	def start(self):
-		global TICK_INTERVAL
+		print("Light show started!")
+		
 		if self.virtual:
-			self.virtual.start(TICK_INTERVAL, self.virtualGuiUpdate)
-		
-		self.input.start()
-		
-		if not self.virtual:
+			self.input.start(self.virtual.start)
+		else:
 			self.wrapper = ClientWrapper()
-			self.wrapper.AddEvent(TICK_INTERVAL, self.lightUpdate)
-			self.wrapper.Run()
+			self.wrapper.AddEvent(Rig.TICK_INTERVAL, self.lightUpdate)
+			self.input.start(self.wrapper.Run)
+			self.clearLights()
+		
+		print("Light show ended")
 	
 	def step(self):
+		self.tempo.step()
 		key = self.input.getKey()
 		if key != None:
+			#Exit if Esc is pressed twice
+			if (key == Input.ESC):
+				if (self.exiting):
+					if self.virtual:
+						self.gui.stop()
+					else:
+						self.wrapper.Stop()
+					return
+				else:
+					self.exiting = True
+					print("Press ESC again to confirm exit")
+			else:
+				self.exiting = False
+			
 			if type(self.activeMenu) is RigMenuAction:
 				m = self.activeMenu
 				if m.collectChars > 0 and len(m.data) < m.collectChars:
@@ -131,7 +159,8 @@ class Rig(object):
 						elif type(m) is RigMenuAction:
 							if m.collectChars == 0:
 								print(m.title)
-								m.callback(m.data)
+								#m.callback(m.data)
+								m.callback()
 								m.data = ""
 								self.activeMenu = self.menu
 							else:
@@ -139,7 +168,7 @@ class Rig(object):
 								self.activeMenu = m
 						break
 		
-		if len(self.modules):
+		if self.modules: #len(self.modules):
 			updates = self.modules.run()
 		else:
 			updates = self.group[0].setAll((0,0,0), 0.)
@@ -155,4 +184,11 @@ class Rig(object):
 				light.intensity = u.intensity
 	
 	def addMenu(self, key, title):
-		return self.menu.addMenu(key, title);
+		return self.menu.addMenu(key, title)
+	
+	def initGui(self):
+		if self.gui: return
+		
+		from sldmx.rig_gui import Gui
+		self.gui = Gui(self)
+		

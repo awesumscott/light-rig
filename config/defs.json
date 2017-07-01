@@ -16,7 +16,6 @@
 		{	"id": 3,
 			"name": "Chauvet COLORpalette",
 			"channels": 27,
-			"channelsSetTo255": [0],
 			"light": [
 				{ "rgb": 3,		"posx": -1.5,	"posy": 0.5 },
 				{ "rgb": 6,		"posx": -0.5,	"posy": 0.5 },
@@ -31,7 +30,7 @@
 		{	"id": 4,
 			"name": "Chauvet COLORrail",
 			"channels": 26,
-			"channelsSetTo255": [0],
+			"fixedchannels": {"0": 255},
 			"light": [
 				{ "rgb": 1,		"posx": -3.5,	"posy": 0 },
 				{ "rgb": 4,		"posx": -2.5,	"posy": 0 },

@@ -1,6 +1,4 @@
-from sldmx.rig_utils import Update
-
-#module groups allow for nesting and replacing
+#base module functionality for all modules to inherit
 class Module(object):
 	def __init__(self, rig):
 		self.rig = rig
