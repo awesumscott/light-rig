@@ -6,7 +6,7 @@ class ModStrobe(Module):
 		super(ModStrobe, self).__init__(rig)
 		self.group = group
 		self.destroy = False
-		self.sps = 1./sps #strobes per second
+		self.sps = ((self.rig.tempo.avg)/1000) / float(sps) #strobes per beat
 		self.timer = Timer(self.sps) #/2 because "one strobe" is half the time off then half the time on
 		
 		self.intensity = 0. #maybe this should be a parameter

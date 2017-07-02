@@ -18,6 +18,8 @@ class ModFader(Module):
 		self.colorListIndex = colorListIndex
 		self.colorIndex = 0
 		self.timer = Timer(speed)
+	def __str__(self):
+		return 'Fader (List ' + str(self.colorListIndex) + ')'
 	def restart(self):
 		self.colorIndex = 0
 		self.timer.restart()

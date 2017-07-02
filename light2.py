@@ -101,28 +101,23 @@ def toggleStrobe():
 		rig.modules.remove(strobeModule)
 		strobeModule = None
 	else:
-		strobeModule = ModStrobe(rig, curGroup, 5)
+		strobeModule = ModStrobe(rig, curGroup, 3)
 		rig.modules.add(strobeModule)
+def addStatic():
+	rig.modules.add(ModStatic(rig, curGroup, 1))
 
 def setSongPresets(data):
-	global presetst
+	global presets
 	global presetIndex
-	try:
-		jsonData = open('./songs/' + str(data) + '.json', 'r')
-		data = json.load(jsonData)
-		jsonData.close()	
-	except FileNotFoundError:
-		print("No song config with ID " + str(data))
-		return
 	
-	#rig.colorList = []
-	#for colorList in data["colorLists"]
-	#	rig.colorList.append(colorList)
-	rig.colorList = data["colorLists"]
+	loader = Loader(rig)
+	if (not loader.load(str(data))): return
+	
+	return
 	
 	p1 = ModGroup(rig)
-	#p1.add(ModFill(rig, curGroup, red, .5))
-	p1.add(ModFill(rig, curGroup, None, .5))
+	p1.add(ModFill(rig, curGroup, red, .5))
+	#p1.add(ModFill(rig, curGroup, None, .5))
 	presets.append(p1)
 	
 	p2 = ModGroup(rig)
@@ -135,9 +130,11 @@ def setSongPresets(data):
 	presetIndex = 0
 	rig.modules.add(presets[presetIndex])
 	
-	print('Song loaded: "' + data['name'] + '" by ' + data['artist'])
-	
 def preset1():
+	if len(rig.presets):
+		rig.loadPreset("a")
+	return
+	
 	global presetIndex
 	if len(presets) < 1: return
 	if presets[presetIndex] == presets[0]: return
@@ -145,6 +142,10 @@ def preset1():
 	rig.modules[0].replaceWith(ModTransition(rig, rig.modules[0], presets[presetIndex], 1.))
 	
 def preset2():
+	if len(rig.presets):
+		rig.loadPreset("b")
+	return
+	
 	global presetIndex
 	if len(presets) < 2: return
 	if presets[presetIndex] == presets[1]: return
@@ -152,6 +153,10 @@ def preset2():
 	rig.modules[0].replaceWith(ModTransition(rig, rig.modules[0], presets[presetIndex], 1.))
 	
 def preset3():
+	if len(rig.presets):
+		rig.loadPreset("c")
+	return
+	
 	global presetIndex
 	if len(presets) < 3: return
 	if presets[presetIndex] == presets[2]: return
@@ -186,7 +191,6 @@ colorMenu.addAction('4', "Setting chase color", setChaseColor, 1)
 colorMenu.addAction('9', "Clearing color list", clearColors)
 
 rig.menu.addAction('4', "Starting transition module", startTransition)
-rig.menu.addAction('z', "Adding chase", startChase)
 rig.menu.addAction('6', "Starting delayed strobe", strobeDelay)
 rig.menu.addAction('p', "Popping last module added", rig.modules.pop)
 rig.menu.addAction('9', "Setting current group", setCurGroup, 1)
@@ -196,7 +200,10 @@ rig.menu.addAction('/', "Enter 3-digit song ID", setSongPresets, 3)
 rig.menu.addAction('.', "Tap", rig.tempo.tap)
 rig.menu.addAction('s', "Status", printStatus)
 #rig.menu.addAction('a', "Impulse", impulse)
+rig.menu.addAction('z', "Adding chase", startChase)
 rig.menu.addAction('x', "Toggle strobe", toggleStrobe)
+rig.menu.addAction('v', "Adding static", addStatic)
+
 rig.menu.addAction('a', "Switching to Preset 1", preset1)
 rig.menu.addAction('b', "Switching to Preset 2", preset2)
 rig.menu.addAction('c', "Switching to Preset 3", preset3)

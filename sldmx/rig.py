@@ -8,7 +8,7 @@ from ola.ClientWrapper import ClientWrapper
 from sldmx.rig_tempo import TapTempo
 
 from sldmx.mod_group import ModGroup
-from sldmx.mod_fill import ModFill
+from sldmx.rig_loader import Loader
 
 class Rig(object):
 	TICK_INTERVAL = 20
@@ -27,8 +27,7 @@ class Rig(object):
 		self.dmxData = {}
 		self.tempo = TapTempo()
 		self.gui = None
-
-		#self.modules.add(ModFill(self, 0, None, Light.IntensityBase))
+		self.presets = {}
 		
 		if self.virtual:
 			self.virtual = VirtualRig(self)
@@ -191,4 +190,7 @@ class Rig(object):
 		
 		from sldmx.rig_gui import Gui
 		self.gui = Gui(self)
+	
+	def loadPreset(self, key):
+		Loader.loadPreset(self, key)
 		

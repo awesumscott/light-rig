@@ -1,6 +1,6 @@
 from sldmx.rig_utils import Update
 from sldmx.mod_base import Module
-from sldmx.rig_utils import Timer, easeOutFast
+from sldmx.rig_utils import Timer, easeOut
 
 class ModImpulse(Module):
 	def __init__(self, rig, group, duration=1.):
