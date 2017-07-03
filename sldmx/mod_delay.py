@@ -7,7 +7,7 @@ class ModDelay(Module):
 		self.module = module
 		self.timer = Timer(duration)
 	def __str__(self):
-		return "Delay(" + self.duration + ")"
+		return "Delay (" + self.duration + ")"
 	def restart(self):
 		self.timer.restart()
 	def run(self):

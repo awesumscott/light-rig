@@ -61,6 +61,16 @@
 						"intensity": 0.5,
 						"group": 0
 					}
+				},
+				{	"type": "beat",
+					"params": {
+						"module": {
+							"type": "impulse",
+							"params": {
+								"group": 0
+							}
+						}
+					}
 				}
 			]
 		}

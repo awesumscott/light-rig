@@ -1,6 +1,8 @@
 import json
+from sldmx.mod_beat import ModBeat
 from sldmx.mod_delay import ModDelay
 from sldmx.mod_fill import ModFill
+from sldmx.mod_impulse import ModImpulse
 from sldmx.mod_static import ModStatic
 
 class Loader(object):
@@ -52,12 +54,24 @@ class Loader(object):
 	@staticmethod
 	def _loadModule(rig, mod):
 		modType = mod["type"]
-		if modType == "fill":
-			return ModFill(rig, **Loader._inflateParams(rig, mod["params"]))
-		elif modType == "static":
-			return ModStatic(rig, **Loader._inflateParams(rig, mod["params"]))
+		inflatedParams = Loader._inflateParams(rig, mod["params"])
+		if modType == "beat":
+			return ModBeat(rig, **inflatedParams)
 		elif modType == "delay":
-			return ModDelay(rig, **Loader._inflateParams(rig, mod["params"]))
+			return ModDelay(rig, **inflatedParams)
+		elif modType == "fill":
+			return ModFill(rig, **inflatedParams)
+		elif modType == "impulse":
+			return ModImpulse(rig, **inflatedParams)
+		elif modType == "static":
+			return ModStatic(rig, **inflatedParams)
+	
+	@staticmethod
+	def _loadList(rig, lst):
+		newLst = []
+		for li in lst:
+			newLst.append(Loader._loadModule(rig, li) if (type(li) is dict) else li)
+		return newLst
 	
 	@staticmethod
 	#recursive method to instantiate new module instances from
@@ -70,8 +84,8 @@ class Loader(object):
 			
 			if paramType is dict:
 				newParams[param] = Loader._loadModule(rig, params[param])
-			#elif paramType is list:
-			#	pass #module list? maybe a list loading function to test subtypes
+			elif paramType is list:
+				newParams[param] = Loader._loadList(rig, params[param])
 			else:
 				newParams[param] = params[param]
 		return newParams

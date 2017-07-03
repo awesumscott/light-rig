@@ -13,8 +13,7 @@ class ModImpulse(Module):
 	def __str__(self):
 		return "Impulse"
 	def restart(self):
-		self.timer.restart()
-		self.intensity = 1.
+		self.timer = Timer(self.rig.tempo.avg / 1000)
 	def run(self):
 		if self.timer.done():
 			self.destroy = True

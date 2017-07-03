@@ -4,6 +4,7 @@ from sldmx.rig_colors import *
 from sldmx.rig_loader import Loader
 from sldmx.rig_tempo import TapTempo
 from sldmx.rig_utils import Update, LightSource, Timer, easeLinear, easeInOut, easeCircle
+from sldmx.mod_beat import ModBeat
 from sldmx.mod_chase import ModChase
 from sldmx.mod_delay import ModDelay
 from sldmx.mod_fader import ModFader
