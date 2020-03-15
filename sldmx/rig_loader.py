@@ -1,12 +1,17 @@
 import json
 from sldmx.mod_beat import ModBeat
+from sldmx.mod_chase import ModChase
 from sldmx.mod_delay import ModDelay
+from sldmx.mod_fader import ModFader
 from sldmx.mod_fill import ModFill
+from sldmx.mod_group import ModGroup
 from sldmx.mod_impulse import ModImpulse
+from sldmx.mod_selfdestruct import ModSelfDestruct
 from sldmx.mod_static import ModStatic
+from sldmx.mod_strobe import ModStrobe
+from sldmx.rig_colors import Colors
 
 class Loader(object):
-	TICK_INTERVAL = 20
 	def __init__(self, rig):
 		self.rig = rig
 	
@@ -19,7 +24,25 @@ class Loader(object):
 			print("No song config with ID " + str(data))
 			return False
 		
-		self.rig.colorList = data["colorLists"]
+		if "bpm" in data:
+			bpm = int(data["bpm"])
+			self.rig.tempo.avg = 60000 / bpm #bpm to ms
+		
+		#self.rig.colorList = data["colorLists"]
+		#all this trouble to stick with tuples, maybe they should change to lists
+		if "colorLists" in data:
+			self.rig.colorList = []
+			for cl in data["colorLists"]:
+				nl = []
+				for li in cl:
+					liType = type(li)
+					if liType is list:
+						nl.append(tuple(li))
+					elif liType is str:
+						if li in Colors:
+							nl.append(Colors[li])
+						#else print error msg
+				self.rig.colorList.append(nl)
 		
 		self.rig.presets = {}
 		if "presets" in data:
@@ -30,15 +53,8 @@ class Loader(object):
 		#	for mod in mods:
 		#		modType = mod["type"]
 		#		if modType == "fill":
-					
-		#"presets": [
-		#{	"key": "a",
-		#	"modules": [
-		#		{	"type": "fill",
-		#			"params": {
-		#				"color": [255, 0, 0],
-		#				"intensity": 0.5,
-		#				"group": 0
+		
+		print("GRADIENT SOURCE = " + data["ui"][0]["source"])
 		
 		print('Song loaded: "' + data['name'] + '" by ' + data['artist'])
 		
@@ -46,6 +62,7 @@ class Loader(object):
 	
 	@staticmethod
 	def loadPreset(rig, key):
+		rig.presetRefs = {}
 		if key in rig.presets:
 			rig.modules.clear()
 			preset = rig.presets[key]
@@ -54,17 +71,35 @@ class Loader(object):
 	@staticmethod
 	def _loadModule(rig, mod):
 		modType = mod["type"]
-		inflatedParams = Loader._inflateParams(rig, mod["params"])
+		inflatedParams = {}
+		if "params" in mod:
+			inflatedParams = Loader._inflateParams(rig, mod["params"])
+		
 		if modType == "beat":
-			return ModBeat(rig, **inflatedParams)
+			newMod = ModBeat(rig, **inflatedParams)
+		elif modType == "chase":
+			newMod = ModChase(rig, **inflatedParams)
 		elif modType == "delay":
-			return ModDelay(rig, **inflatedParams)
+			newMod = ModDelay(rig, **inflatedParams)
+		elif modType == "fader":
+			newMod = ModFader(rig, **inflatedParams)
 		elif modType == "fill":
-			return ModFill(rig, **inflatedParams)
+			newMod = ModFill(rig, **inflatedParams)
+		elif modType == "group":
+			newMod = ModGroup(rig, **inflatedParams)
 		elif modType == "impulse":
-			return ModImpulse(rig, **inflatedParams)
+			newMod = ModImpulse(rig, **inflatedParams)
+		elif modType == "selfdestruct":
+			newMod = ModSelfDestruct(rig, **inflatedParams)
 		elif modType == "static":
-			return ModStatic(rig, **inflatedParams)
+			newMod = ModStatic(rig, **inflatedParams)
+		elif modType == "strobe":
+			newMod = ModStrobe(rig, **inflatedParams)
+		
+		if "name" in mod:
+			rig.presetRefs[mod["name"]] = newMod
+		
+		return newMod
 	
 	@staticmethod
 	def _loadList(rig, lst):
@@ -80,7 +115,7 @@ class Loader(object):
 		newParams = {}
 		for param in params:
 			paramType = type(params[param])
-			print(paramType)
+			#print(paramType)
 			
 			if paramType is dict:
 				newParams[param] = Loader._loadModule(rig, params[param])

@@ -4,9 +4,9 @@ from sldmx.mod_transition import ModTransition
 
 #module groups allow for nesting and replacing
 class ModGroup(Module):
-	def __init__(self, rig):
+	def __init__(self, rig, modules=[]):
 		super(ModGroup, self).__init__(rig)
-		self._modules = []
+		self._modules = modules
 	def __str__(self):
 		#tostr = lambda x: str(x)
 		
@@ -14,6 +14,11 @@ class ModGroup(Module):
 		#for mod in self._modules:
 		#	modStrs += str(mod) + ', '
 		return 'Group(' + ', '.join(map(lambda x: str(x), self._modules)) + ')'
+	def copy(self):
+		mods = []
+		for m in self._modules:
+			mods.append(m.copy())
+		return ModGroup(self.rig, mods)
 	def __len__(self):
 		return len(self._modules)
 	def __getitem__(self,index):

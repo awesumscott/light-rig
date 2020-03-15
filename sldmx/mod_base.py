@@ -4,6 +4,8 @@ class Module(object):
 		self.rig = rig
 		self.destroy = False
 		self.replacement = None
+	def copy(self):
+		return Module(self.rig)
 	def restart(self):
 		pass
 	def replaceWith(self, newModule):

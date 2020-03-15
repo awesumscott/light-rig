@@ -7,8 +7,11 @@ class ModSelfDestruct(Module):
 		super(ModSelfDestruct, self).__init__(rig)
 		self.module = module
 		self.timer = Timer(duration)
+		self.duration = duration
 	def __str__(self):
 		return "SelfDestruct(" + str(self.duration) + ")"
+	def copy(self):
+		return ModSelfDestruct(self.rig, self.module.copy(), self.duration)
 	def restart(self):
 		self.timer.restart()
 		self.module.restart()

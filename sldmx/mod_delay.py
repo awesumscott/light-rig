@@ -8,6 +8,8 @@ class ModDelay(Module):
 		self.timer = Timer(duration)
 	def __str__(self):
 		return "Delay (" + self.duration + ")"
+	def copy(self):
+		return ModDelay(self.rig, self.module.copy(), self.duration)
 	def restart(self):
 		self.timer.restart()
 	def run(self):

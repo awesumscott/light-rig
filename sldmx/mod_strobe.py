@@ -2,11 +2,12 @@ from sldmx.rig_utils import Timer, Update
 from sldmx.mod_base import Module
 
 class ModStrobe(Module):
-	def __init__(self, rig, group, sps=1.):
+	def __init__(self, rig, group, spb=1.):
 		super(ModStrobe, self).__init__(rig)
 		self.group = group
 		self.destroy = False
-		self.sps = ((self.rig.tempo.avg)/1000) / float(sps) #strobes per beat
+		self.spb = spb
+		self.sps = ((self.rig.tempo.avg)/1000) / float(spb) #strobes per beat
 		self.timer = Timer(self.sps) #/2 because "one strobe" is half the time off then half the time on
 		
 		self.intensity = 0. #maybe this should be a parameter
@@ -14,6 +15,8 @@ class ModStrobe(Module):
 		self.intensity_max = 1.
 	def __str__(self):
 		return "Strobe(" + str(self.sps) + ")"
+	def copy(self):
+		return ModStrobe(self.rig, self.group, self.spb)
 	def restart(self):
 		self.timer.restart()
 		self.intensity = 1.

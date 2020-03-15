@@ -27,6 +27,10 @@ class ModChase(Module):
 			for ls in self.lightSource:
 				ls.origin = rect[2] + ls.pos + ls.weight
 				self.endpoint = rect[0]
+	def copy(self):
+		return ModChase(self.rig, self.group, self.lightSource, self.type, self.speed, self.slope)
+	def __str__(self):
+		return "Chase"
 	def restart(self):
 		self.timer.restart()
 	def run(self):

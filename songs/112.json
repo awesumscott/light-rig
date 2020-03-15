@@ -5,8 +5,10 @@
 	"bpmreal": 54,
 	
 	"colorLists": [
-		["red", "orange"],
-		["red", "orange", "yellow", "orange"]
+		["blue", "green"],
+		["blue", "purple", "pink", "purple"],
+		["blue", "cyan"],
+		["cyan", "purple", "orange", "purple"]
 	],
 	"ui": [
 		{
@@ -19,15 +21,17 @@
 		{	"key": "a",
 			"modules": [
 				{	"type": "fill",
-					"name": "filler",
 					"params": {
-						"group": 0,
-						"color": [255, 0, 0],
-						"intensity": 0.5
+						"color": [0, 0, 255],
+						"intensity": 0.5,
+						"group": 0
 					}
 				},
-				{	"type": "group",
-					"name": "agroup"
+				{	"type": "fader",
+					"params": {
+						"group": 0,
+						"colorListIndex": 0
+					}
 				}
 			]
 		},
@@ -35,21 +39,15 @@
 			"modules": [
 				{	"type": "fill",
 					"params": {
-						"color": [0, 255, 0],
+						"color": [0, 0, 255],
 						"intensity": 0.5,
 						"group": 0
 					}
 				},
-				{	"type": "delay",
+				{	"type": "fader",
 					"params": {
-						"duration": 5,
-						"module": {
-							"type": "static",
-							"params": {
-								"group": 0,
-								"maxIntensity": 1
-							}
-						}
+						"group": 0,
+						"colorListIndex": 1
 					}
 				}
 			]
@@ -63,28 +61,10 @@
 						"group": 0
 					}
 				},
-				{	"type": "beat",
+				{	"type": "fader",
 					"params": {
-						"module": {
-							"type": "group",
-							"params": {
-								"modules": [
-								
-									{	"type": "selfdestruct",
-										"params": {
-											"duration": 0.5,
-											"module": {"type": "strobe",
-												"params": {
-													"group": 0,
-													"spb": 5
-												}
-											}
-										}
-									}
-								
-								]
-							}
-						}
+						"group": 0,
+						"colorListIndex": 2
 					}
 				}
 			]
@@ -101,7 +81,7 @@
 				{	"type": "fader",
 					"params": {
 						"group": 0,
-						"colorListIndex": 1
+						"colorListIndex": 3
 					}
 				}
 			]

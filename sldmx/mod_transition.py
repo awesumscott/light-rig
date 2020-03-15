@@ -11,6 +11,8 @@ class ModTransition(Module):
 		self.timer = Timer(duration)
 	def __str__(self):
 		return 'Transition(FROM: ' + str(self.oldModule) + ' TO: ' + str(self.newModule) + ')'
+	def copy(self):
+		print("Transition copy, NYI. how the hell would this work?")
 	def restart(self):
 		self.timer.restart()
 	def run(self):

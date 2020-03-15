@@ -16,6 +16,8 @@ class ModStatic(Module):
 		self._newIntensity()
 	def __str__(self):
 		return 'Static'
+	def copy(self):
+		return ModStatic(self.rig, self.group, self.maxIntensity)
 	def restart(self):
 		pass
 		#self.timer.restart()

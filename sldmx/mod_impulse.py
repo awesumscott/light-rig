@@ -7,11 +7,14 @@ class ModImpulse(Module):
 		super(ModImpulse, self).__init__(rig)
 		self.group = group
 		self.destroy = False
+		self.duration = duration
 		
 		#self.intensity = 1. #maybe this should be a parameter
 		self.timer = Timer(self.rig.tempo.avg / 1000)
 	def __str__(self):
 		return "Impulse"
+	def copy(self):
+		return ModImpulse(self.rig, self.group, self.duration)
 	def restart(self):
 		self.timer = Timer(self.rig.tempo.avg / 1000)
 	def run(self):
